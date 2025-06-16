@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .calculator {
+      width: 400px;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      transition: background-color 0.3s;
+    }
+
+    .display {
+      padding: 20px;
+      font-size: 2rem;
+      background-color: #f9f9f9;
+      text-align: right;
+      overflow-x: auto;
+      color: #000;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background-color: #dcdcdc;
+    }
+
+    button {
+      padding: 20px;
+      font-size: 1.2rem;
+      background-color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #efefef;
+    }
+
+    .dark {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .dark .calculator {
+      background-color: #1f1f1f;
+    }
+
+    .dark .display {
+      background-color: #333;
+      color: #0f0;
+    }
+
+    .dark .buttons button {
+      background-color: #2b2b2b;
+      color: #ffffff;
+    }
+
+    .dark .buttons button:hover {
+      background-color: #3a3a3a;
+    }
+
+    .toggle-theme {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 14px;
+      font-size: 1.2rem;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .dark .toggle-theme {
+      background: #fff;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-theme">🌓</button>
+
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="append('%')">%</button>
+      <button onclick="append('π')">π</button>
+      <button onclick="append('e')">e</button>
+
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('/')">÷</button>
+
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('*')">×</button>
+
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="append('-')">−</button>
+
+      <button onclick="append('0')">0</button>
+      <button onclick="append('.')">.</button>
+      <button onclick="calculate()">=</button>
+      <button onclick="append('+')">+</button>
+
+      <button onclick="backspace()">←</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    const functions = {
+      'π': 'Math.PI',
+      'e': 'Math.E',
+    };
+
+    function append(value) {
+      if (display.textContent === '0') {
+        display.textContent = value;
+      } else {
+        display.textContent += value;
+      }
+    }
+
+    function clearDisplay() {
+      display.textContent = '0';
+    }
+
+    function backspace() {
+      display.textContent = display.textContent.slice(0, -1) || '0';
+    }
+
+    function calculate() {
+      try {
+        let expression = display.textContent;
+        for (const key in functions) {
+          const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+          expression = expression.replace(regex, functions[key]);
+        }
+        const result = Function(`return (${expression})`)();
+        display.textContent = result;
+      } catch (e) {
+        display.textContent = 'Error';
+      }
+    }
+
+    document.querySelector('.toggle-theme').addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+    });
+  </script>
+</body>
+</html>
